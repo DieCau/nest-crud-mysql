@@ -1,26 +1,41 @@
 import {Injectable} from '@nestjs/common';
 import {CreateCatDto} from './dto/create-cat.dto';
 import {UpdateCatDto} from './dto/update-cat.dto';
+import {InjectRepository} from '@nestjs/typeorm';
+import {Cat} from './entities/cat.entity';
+import {Repository} from 'typeorm';
 
 @Injectable()
 export class CatsService {
-  create(createCatDto: CreateCatDto) {
-    return 'Esta acción agrega un nuevo Gato 😺';
+  constructor(
+    @InjectRepository(Cat)
+    private readonly catRepository: Repository<Cat>,
+  ) {}
+
+  async create(createCatDto: CreateCatDto) {
+    // Aqui se crea la instancia
+    const cat = this.catRepository.create(createCatDto);
+    try {
+      // Aqui se Guarda los datos en la DB
+      return await this.catRepository.save(cat);
+    } catch (err) {
+      console.log(err);
+    }
   }
 
-  findAll() {
-    return `Esta acción retorna todos los gatos 😸😸😸`;
+  async findAll() {
+    return await this.catRepository.find();
   }
 
-  findOne(id: number) {
-    return `Esta acción retorna el gato #${id} 😸👈`;
+  async findOne(id: number) {
+    return await this.catRepository.findOneBy({id});
   }
 
-  update(id: number, updateCatDto: UpdateCatDto) {
-    return `Esta acción actualiza el gato #${id} 😸✏️`;
+  async update(id: number, updateCatDto: UpdateCatDto) {
+    return await this.catRepository.update(id, updateCatDto);
   }
 
-  remove(id: number) {
-    return `Esta acción remueve el gato #${id} 😸🚷`;
+  async remove(id: number) {
+    return await this.catRepository.softDelete(id);
   }
 }

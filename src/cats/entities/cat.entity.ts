@@ -1,4 +1,4 @@
-import {Column, Entity} from 'typeorm';
+import {Column, DeleteDateColumn, Entity} from 'typeorm';
 
 @Entity() // Decorador
 export class Cat {
@@ -10,8 +10,11 @@ export class Cat {
   name: string;
 
   @Column()
-  age: string;
+  age: number;
 
   @Column()
   breed: string;
+
+  @DeleteDateColumn()
+  deleteAt: Date;
 }
